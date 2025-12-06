@@ -13,9 +13,10 @@ After downloading HAM10000, place the following files/directories into the `data
 - `HAM10000_images_part_1/`
 - `HAM10000_images_part_2/`
 
-Then run the preprocessing pipeline:
+Then run the preprocessing and split generation scripts to clean metadata and create reproducible splits:
 ```bash
-python data/HAM10000_pipeline.py
+python data/HAM10000_preprocess.py
+python data/HAM10000_gen_splits.py
 ```
 
 ## Dataset Attribution
