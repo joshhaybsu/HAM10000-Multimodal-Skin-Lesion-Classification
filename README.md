@@ -28,6 +28,11 @@ https://creativecommons.org/licenses/by-nc-sa/4.0/
 
 This repository does **not** distribute the dataset.
 
-Users must download it separately from Kaggle or the ISIC Archive.
-
 All analysis in this project is based on locally stored copies that are not redistributed.
+
+### **Dataset Source (IMPORTANT)**
+This project requires the **Kaggle version** of HAM10000:
+
+https://www.kaggle.com/datasets/kmader/skin-cancer-mnist-ham10000
+
+Do **not** use the ISIC Archive version, as its metadata format and folder structure are different and incompatible with the preprocessing pipeline used.
