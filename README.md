@@ -13,6 +13,11 @@ After downloading HAM10000, place the following files/directories into the `data
 - `HAM10000_images_part_1/`
 - `HAM10000_images_part_2/`
 
+Then run the preprocessing pipeline:
+```bash
+python data/HAM10000_pipeline.py
+```
+
 ## Dataset Attribution
 The HAM10000 dataset was created by Philipp Tschandl, Cliff Rosendahl, and Harald Kittler.
 
