@@ -208,6 +208,7 @@ __marimo__/
 
 # HAM10000 dataset (do not redistribute)
 data/HAM10000_metadata.csv
+data/HAM10000_processed.csv
 data/HAM10000_images_part_1/
 data/HAM10000_images_part_2/
 data/splits/
