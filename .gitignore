@@ -213,6 +213,9 @@ data/HAM10000_images_part_1/
 data/HAM10000_images_part_2/
 data/splits/
 
+# Ignore any binary model data
+*.pth
+
 # Ignore any accidentally committed image files
 *.jpg
 *.png
