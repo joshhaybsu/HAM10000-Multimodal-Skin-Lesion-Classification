@@ -155,10 +155,10 @@ def main():
     print("Evaluating Baseline...")
     base_metrics, base_labels, base_probs = evaluate(baseline, test_loader, multimodal=False)
 
-    plot_roc(base_labels, base_probs, "Baseline ROC Curve", "results/roc_baseline.png")
-    plot_confusion_matrix(base_metrics["confusion_matrix"], "Baseline Confusion Matrix", "results/cm_baseline.png")
-    plot_pr_curve(base_labels, base_probs, "Baseline PR Curve", "results/pr_baseline.png")
-    plot_threshold_sweep(base_labels, base_probs, "Baseline Threshold Sweep", "results/threshold_baseline.png")
+    plot_roc(base_labels, base_probs, "Baseline ROC Curve", "results/baseline/roc_baseline.png")
+    plot_confusion_matrix(base_metrics["confusion_matrix"], "Baseline Confusion Matrix", "results/baseline/cm_baseline.png")
+    plot_pr_curve(base_labels, base_probs, "Baseline PR Curve", "results/baseline/pr_baseline.png")
+    plot_threshold_sweep(base_labels, base_probs, "Baseline Threshold Sweep", "results/baseline/threshold_baseline.png")
 
     results.append({
         "model": "baseline",
@@ -179,10 +179,10 @@ def main():
     print("Evaluating Multimodal...")
     multi_metrics, multi_labels, multi_probs = evaluate(multimodal, test_loader, multimodal=True)
 
-    plot_roc(multi_labels, multi_probs, "Multimodal ROC Curve", "results/roc_multimodal.png")
-    plot_confusion_matrix(multi_metrics["confusion_matrix"], "Multimodal Confusion Matrix", "results/cm_multimodal.png")
-    plot_pr_curve(multi_labels, multi_probs, "Multimodal PR Curve", "results/pr_multimodal.png")
-    plot_threshold_sweep(multi_labels, multi_probs, "Multimodal Threshold Sweep", "results/threshold_multimodal.png")
+    plot_roc(multi_labels, multi_probs, "Multimodal ROC Curve", "results/multimodal/roc_multimodal.png")
+    plot_confusion_matrix(multi_metrics["confusion_matrix"], "Multimodal Confusion Matrix", "results/multimodal/cm_multimodal.png")
+    plot_pr_curve(multi_labels, multi_probs, "Multimodal PR Curve", "results/multimodal/pr_multimodal.png")
+    plot_threshold_sweep(multi_labels, multi_probs, "Multimodal Threshold Sweep", "results/multimodal/threshold_multimodal.png")
 
     results.append({
         "model": "multimodal",
