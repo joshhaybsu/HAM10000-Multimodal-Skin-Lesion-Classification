@@ -17,9 +17,9 @@ from utils.dataloaders import get_dataloaders
 
 # Configuration
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
-BATCH_SIZE = 128
+BATCH_SIZE = 64
 LR = 1e-4
-EPOCHS = 50
+EPOCHS = 30
 
 IMAGE_DIRS = [
     "data/HAM10000_images_part_1",
