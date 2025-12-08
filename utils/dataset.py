@@ -9,14 +9,15 @@ from torchvision import transforms
 class HAM10000Dataset(Dataset):
     """
     Dataset returning:
-        image_tensor, metadata_tensor, label_tensor
+        baseline:   image, metadata_tensor, label
+        multimodal: image, metadata_dict(age, sex, loc), label
     """
 
     def __init__(self, csv_path, image_dirs, transform=None):
         self.df = pd.read_csv(csv_path).reset_index(drop=True)
         self.image_dirs = image_dirs
 
-        # Default transform
+        # Image transform
         self.transform = transform or transforms.Compose([
             transforms.Resize((224, 224)),
             transforms.ToTensor(),
@@ -26,29 +27,31 @@ class HAM10000Dataset(Dataset):
             )
         ])
 
-        # ---- Metadata processing ----
-        # Normalise age to [0,1]
+        # -----------------------------------------
+        # METADATA PROCESSING
+        # -----------------------------------------
+
+        # Age normalization
         self.df["age"] = self.df["age"].fillna(self.df["age"].median())
         self.df["age_norm"] = self.df["age"] / 100.0
 
-        # Encode sex → {0, 1}
+        # Sex vocab + encoding
         self.df["sex"] = self.df["sex"].fillna("unknown")
-        self.sex_map = {"male": 1, "female": 0, "unknown": 0.5}
-        self.df["sex_encoded"] = self.df["sex"].map(self.sex_map)
+        self.sex_vocab = {sex: i for i, sex in enumerate(sorted(self.df["sex"].unique()))}
+        self.df["sex_id"] = self.df["sex"].map(self.sex_vocab)
 
-        # Encode location as integer, model will embed later
+        # Location vocab + encoding
         self.df["localization"] = self.df["localization"].fillna("unknown")
-        self.loc_vocab = {loc: i for i, loc in enumerate(self.df["localization"].unique())}
-        self.df["location_encoded"] = self.df["localization"].map(self.loc_vocab)
+        self.loc_vocab = {loc: i for i, loc in enumerate(sorted(self.df["localization"].unique()))}
+        self.df["loc_id"] = self.df["localization"].map(self.loc_vocab)
 
     def __len__(self):
         return len(self.df)
 
     def _find_image(self, image_id):
-        """Search both directories for matching PNG/JPG."""
-        possible_exts = [".jpg", ".jpeg", ".png"]
+        """Search directories for matching image file."""
         for directory in self.image_dirs:
-            for ext in possible_exts:
+            for ext in [".jpg", ".jpeg", ".png"]:
                 path = os.path.join(directory, image_id + ext)
                 if os.path.exists(path):
                     return path
@@ -57,19 +60,37 @@ class HAM10000Dataset(Dataset):
     def __getitem__(self, idx):
         row = self.df.iloc[idx]
 
-        # --- Load image ---
-        image_path = self._find_image(row["image_id"])
-        image = Image.open(image_path).convert("RGB")
-        image = self.transform(image)
+        # -----------------------------------------
+        # IMAGE
+        # -----------------------------------------
+        img_path = self._find_image(row["image_id"])
+        img = Image.open(img_path).convert("RGB")
+        img = self.transform(img)
 
-        # --- Metadata tensor ---
-        metadata = torch.tensor([
-            row["age_norm"],
-            row["sex_encoded"],
-            row["location_encoded"]
-        ], dtype=torch.float32)
-
-        # --- Label ---
+        # -----------------------------------------
+        # LABEL
+        # -----------------------------------------
         label = torch.tensor(row["label_binary"], dtype=torch.float32)
 
-        return image, metadata, label
+        # -----------------------------------------
+        # BASELINE METADATA (tensor)
+        # -----------------------------------------
+        metadata_tensor = torch.tensor([
+            row["age_norm"],
+            float(row["sex_id"]),     # still numeric, preserves old behavior
+            float(row["loc_id"])
+        ], dtype=torch.float32)
+
+        # -----------------------------------------
+        # MULTIMODAL METADATA (dict)
+        # -----------------------------------------
+        metadata_dict = {
+            "age": torch.tensor([row["age_norm"]], dtype=torch.float32),
+            "sex": torch.tensor(row["sex_id"], dtype=torch.long),
+            "loc": torch.tensor(row["loc_id"], dtype=torch.long)
+        }
+
+        # Both models expect: image, metadata, label
+        # Baseline uses metadata_tensor
+        # Multimodal uses metadata_dict
+        return img, {"tensor": metadata_tensor, **metadata_dict}, label
