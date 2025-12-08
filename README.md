@@ -7,17 +7,34 @@
 This project investigates whether incorporating patient metadata*(age, sex, and lesion location) alongside dermoscopic images improves malignant skin lesion classification. Using the HAM10000 dataset, comparing a baseline **image-only convolutional neural network (CNN)** against a **multimodal deep learning model** that fuses image features with metadata.
 
 ### Using the Dataset
-After downloading HAM10000, place the following files/directories into the `data/` folder:
+After downloading HAM10000 from **Kaggle**, place the following into the `data/` folder:
 
 - `HAM10000_metadata.csv`
 - `HAM10000_images_part_1/`
 - `HAM10000_images_part_2/`
 
-Then run the preprocessing and split generation scripts to clean metadata and create reproducible splits:
+### 1. Preprocess metadata and generate dataset splits
 ```bash
 python data/HAM10000_preprocess.py
 python data/HAM10000_gen_splits.py
 ```
+
+### 2. Train both models
+```bash
+python train_baseline.py
+python train_multimodal.py
+```
+### 3. Evaluate trained models
+```bash
+python evaluate_models.py
+```
+
+### Outputs
+- Model checkpoints: `checkpoints/`
+- Numerical results table: `results/test_resultsYYYYMMDD_HHMMSS.csv`
+- Generated plots:
+  - `results/baseline/`
+  - `results/multimodal/`
 
 ## Dataset Attribution
 The HAM10000 dataset was created by Philipp Tschandl, Cliff Rosendahl, and Harald Kittler.
@@ -31,9 +48,14 @@ This repository does **not** distribute the dataset.
 
 All analysis in this project is based on locally stored copies that are not redistributed.
 
-### **Dataset Source (IMPORTANT)**
+## Dataset Source **(IMPORTANT)**
 This project requires the **Kaggle version** of HAM10000:
 
 https://www.kaggle.com/datasets/kmader/skin-cancer-mnist-ham10000
 
-Do **not** use the ISIC Archive version, as its metadata format and folder structure are different and incompatible with the preprocessing pipeline used.
+The ISIC Archive version has a different folder structure and metadata schema that is not compatible with this preprocessing pipeline.
+
+## Recommended Requirements
+Training is GPU-accelerated.
+
+A CUDA-compatible GPU (≥ 8 GB VRAM) is recommended for reasonable training times.
